@@ -7,9 +7,9 @@
 #include <string>
 #include <vector>
 
-#include "../Activity.h"
+#include "../ActivityWithSubactivity.h"
 
-class FileSelectionActivity final : public Activity {
+class FileSelectionActivity final : public ActivityWithSubactivity {
   TaskHandle_t displayTaskHandle = nullptr;
   SemaphoreHandle_t renderingMutex = nullptr;
   std::string basepath = "/";
@@ -30,7 +30,7 @@ class FileSelectionActivity final : public Activity {
   explicit FileSelectionActivity(GfxRenderer& renderer, MappedInputManager& mappedInput,
                                  const std::function<void(const std::string&)>& onSelect,
                                  const std::function<void()>& onGoHome, std::string initialPath = "/")
-      : Activity("FileSelection", renderer, mappedInput),
+      : ActivityWithSubactivity("FileSelection", renderer, mappedInput),
         basepath(initialPath.empty() ? "/" : std::move(initialPath)),
         onSelect(onSelect),
         onGoHome(onGoHome) {}

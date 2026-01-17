@@ -7,10 +7,13 @@
 #include "fontIds.h"
 #include "util/StringUtils.h"
 
+#include "BookManagerActivity.h"
+
 namespace {
 constexpr int PAGE_ITEMS = 23;
 constexpr int SKIP_PAGE_MS = 700;
 constexpr unsigned long GO_HOME_MS = 1000;
+constexpr unsigned long FILE_MANAGER_MS = 700;
 }  // namespace
 
 void sortFileList(std::vector<std::string>& strs) {
@@ -103,6 +106,29 @@ void FileSelectionActivity::loop() {
       basepath = "/";
       loadFiles();
       updateRequired = true;
+    }
+    return;
+  }
+
+  // Long press CONFIRM (1s+) goes to book context menu
+  if (mappedInput.isPressed(MappedInputManager::Button::Confirm) && mappedInput.getHeldTime() >= FILE_MANAGER_MS) {
+    if (files.empty()) {
+      return;
+    }
+
+    if (basepath.back() != '/') basepath += "/";
+    if (files[selectorIndex].back() != '/') {
+      // Don't start activity transition while rendering
+      xSemaphoreTake(renderingMutex, portMAX_DELAY);
+      exitActivity();
+      std::string selectedPath = basepath + files[selectorIndex];
+      enterNewActivity(new BookManagerActivity(renderer, mappedInput, [this] {
+          exitActivity();
+          updateRequired = true;
+        }, [this, selectedPath] {
+          onSelect(selectedPath);
+        }, selectedPath));
+      xSemaphoreGive(renderingMutex);
     }
     return;
   }
