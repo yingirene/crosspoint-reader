@@ -56,7 +56,7 @@ void TxtReaderActivity::onEnter() {
   txt->setupCacheDir();
 
   // Save current txt as last opened file
-  if (APP_STATE.openEpubPath != txt->getPath()) {
+  if (APP_STATE.openEpubPath != txt->getPath() && !APP_STATE.openEpubPath.empty()) {
     APP_STATE.lastOpenBookPath = APP_STATE.openEpubPath;
   }
   APP_STATE.openEpubPath = txt->getPath();

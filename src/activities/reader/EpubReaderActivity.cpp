@@ -75,7 +75,7 @@ void EpubReaderActivity::onEnter() {
   }
 
   // Save last opened epub before setting current opened epub
-  if (APP_STATE.openEpubPath != epub->getPath()) {
+  if (APP_STATE.openEpubPath != epub->getPath() && !APP_STATE.openEpubPath.empty()) {
     APP_STATE.lastOpenBookPath = APP_STATE.openEpubPath;
   }
   APP_STATE.openEpubPath = epub->getPath();
